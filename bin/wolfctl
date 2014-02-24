@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+require dirname(__DIR__).'/src/socketServer.php';
+require dirname(__DIR__).'/src/wolfCtl.php';
+
+array_shift($_SERVER["argv"]);
+$cmd= implode(' ',$_SERVER["argv"]);
+$config = dirname(__DIR__).'/conf/wolf.conf';
+$ctl = new wolfCtl($config);
+echo $ctl->parseCmd($cmd);

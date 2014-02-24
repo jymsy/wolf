@@ -1,0 +1,41 @@
+[wolfserver]
+host=127.0.0.1
+port=3839
+pidfile=/tmp/wolf.pid ; (wolfserver pidfile;default wolf.pid)
+;logfile=/tmp/wolf.log ; (main log file;default $var/wolf.log)
+logfile_maxsize=1024       ; (KB max main logfile bytes b4 rotation;default 10MB)
+logfile_backups=5           ; (num of main logfile rotation backups;default 10)
+;loglevel=info                ; (log level;default info; others: debug,warn,trace)
+
+[wolfctl]
+host=127.0.0.1
+port=3839
+
+[program:update]
+command=php /data/cloudservice/Framework/tvos/skyc.php upgradepush run
+startretriesecs=60
+mailto=jiangyumeng@skyworth.com
+autostart=true
+autorestart=true
+stdout_logfile_maxbytes=1024
+stderr_logfile_maxbytes=1024
+
+[program:update1]
+command=php /data/cloudservice/Framework/tvos/skyc.php upgradepush run
+stdout_logfile_maxbytes=1024
+stderr_logfile_maxbytes=1024
+
+;[program:example]
+;command=example                           ; the program
+;autostart=false                                    ; start at wolf start (default: false)
+;autorestart=false                                ; whether to restart (default: false)
+;startsecs=1                                          ; number of secs prog must stay starting (def. 1)
+;startretries=3                                      ;
+;startretriesecs=30                              ;
+;mailto=XXX@xxx.com                       ;send a email to the address when process has stopped
+;stdout_logfile=/a/path                      ; stdout log path, none for none; default auto
+;stdout_logfile_maxbytes=1024       ; max # logfile bytes in KB(default 10240(10MB) )
+;stdout_logfile_backups=5                ; # of stdout logfile backups (default 5)
+;stderr_logfile=/a/path                       ; stderr log path, none for none; default auto
+;stderr_logfile_maxbytes=1024        ; max # logfile bytes in KB(default 10240(10MB) )
+;stderr_logfile_backups=5                 ; # of stderr logfile backups (default 5)
