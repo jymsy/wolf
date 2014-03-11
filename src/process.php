@@ -1,5 +1,6 @@
 <?php 
 require 'FileLog.php';
+require 'mail/PHPMailerAutoload.php';
 declare(ticks = 1);
 /**
  * 进程管理主进程
@@ -223,7 +224,7 @@ class Process {
 				$self->log("process $child->pid with $cmd is finished", FileLog::LEVEL_INFO);
 				$self->totalprocess[$name]['last_stop_time']=@date('Y/m/d H:i');
 				if ($self->totalprocess[$name]['mailto']!=='none') {
-					$self->sendMail($name, $self->totalprocess[$name]['mailto']);
+					$self->sendMail($name, $self->totalprocess[$name]['mailto'], true,$files);
 				}
 				if ($self->totalprocess[$name]['autorestart'] === '1') 
 				{
@@ -257,20 +258,47 @@ class Process {
 					$this->totalprocess[$name]['stderr_logfile_backups'],
 					$this->totalprocess[$name]['stderr_logfile_maxbytes']);
 			
-			call_user_func($callback, $cmd, $childfiles);
+			call_user_func($callback, $cmd, $childfiles, $name);
 			exit;
 		}
 	}
 	
-	public function sendMail($name,$sendto)
+	public function sendMail($name,$sendto,$finished=true,$files=array())
 	{
-		$title='process '.$name.' has been stopped.';
 		$content='server ip:'.$this->getIP('eth1');
+		if ($finished) {
+			$title='process '.$name.' has been stopped.';
+			$content.="\n".$this->getLogTail($files[0]);
+		}else {
+			$title='process '.$name.' has been started.';
+		}
 		$sendArr=explode(',', $sendto);
+// 		foreach ($sendArr as $send)
+// 		{
+// 			shell_exec('export LANG=en_US.UTF-8;echo "'.$content.'" |  mail -s "'.$title.'" '.$send);
+// 		}
+		$mail = new PHPMailer;
+		$mail->isSMTP();
+		$mail->SMTPAuth=true;
+		$mail->Host = 'smtp.163.com';
+		$mail->Username = 'jymcron';
+		$mail->Password = '7717810483';
+		
+		$mail->From = 'jymcron@163.com';
+		$mail->FromName = 'Wolf';
 		foreach ($sendArr as $send)
 		{
-			shell_exec('export LANG=en_US.UTF-8;echo "'.$content.'" |  mail -s "'.$title.'" '.$send);
+			$mail->addAddress($send);  // Add a recipient
 		}
+		
+		$mail->Subject = $title;
+		$mail->Body    = $content;
+		$mail->send();
+	}
+	
+	public function getLogTail($filename)
+	{
+		return shell_exec("tail -n 30 $filename");
 	}
 	
 	function getIP($eth){
@@ -280,9 +308,10 @@ class Process {
 	/**
 	 * @param string $cmd
 	 * @param FileLog[] $childfiles
+	 * @param string process name
 	 * @throws Exception
 	 */
-	public function parllelCallback($cmd, $childfiles)
+	public function parllelCallback($cmd, $childfiles, $name)
 	{
 		$this->log("this is child process:$this->pid", FileLog::LEVEL_TRACE);
 		$pipes = array();
@@ -295,6 +324,7 @@ class Process {
 	
 		$resource = proc_open($cmd, $fd, $pipes);
 		$this->log("run cmd:$cmd", FileLog::LEVEL_TRACE);
+		$this->sendMail($name, $this->totalprocess[$name]['mailto'],false);
 		if (!is_resource($resource)) {
 			throw new Exception('Can not run "'.$cmd.'" using pipe open');
 		}
