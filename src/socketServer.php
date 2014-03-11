@@ -4,7 +4,7 @@ class socketServer{
 	public $port;
 	private $_socket;
 	
-	public function __construct($host, $port)
+	public function __construct($host, $port, $isclient=false)
 	{
 		$this->host = $host;
 		$this->port = $port;
@@ -12,19 +12,22 @@ class socketServer{
 			echo 'socket create error:'.socket_strerror(socket_last_error($this->_socket));
 			return false;
 		}
+		
+		if ($isclient) {
+			$result=@socket_connect($this->_socket ,$this->host, $this->port);
+			if ($result === FALSE) {
+				echo "socket connect error:".socket_strerror(socket_last_error($this->_socket))."\n";
+				return false;
+			}
+		}
 	}
 	
 	public function send($msg)
 	{
-		$result=@socket_connect($this->_socket ,$this->host, $this->port);
-		if ($result === FALSE) {
-			echo "socket connect error:".socket_strerror(socket_last_error($this->_socket))."\n";
-		}else{
-			$result = socket_write($this->_socket,$msg,strlen($msg));
-			if ($result) 
-			{
-				$result = @socket_read($this->_socket, 1024);
-			}
+		$result = socket_write($this->_socket,$msg,strlen($msg));
+		if ($result) 
+		{
+			$result = @socket_read($this->_socket, 1024);
 		}
 		
 		return $result;
@@ -71,13 +74,13 @@ class socketServer{
 	
 	public function __destruct()
 	{
-		if ($this->_socket) {
-			socket_close($this->_socket);
-		}
+		$this->disconnect();
 	}
 	
 	public function disconnect()
 	{
-		
+		if ($this->_socket && is_resource($this->_socket)) {
+			socket_close($this->_socket);
+		}
 	}
 }

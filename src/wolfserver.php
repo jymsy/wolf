@@ -51,6 +51,7 @@ class WolfServer{
 			'restart'=>'restartCommand',
 			'help'=>'helpCommand',
 			'pid'=>'pidCommand',
+			'shutdown'=>'shutdownCommand',
 	);
 	
 	public function __construct($config)
@@ -400,6 +401,16 @@ class WolfServer{
 	public function pidCommand($args = null)
 	{
 		return $this->process->pid."\n";
+	}
+	
+	public function shutdownCommand()
+	{
+		$msg='';
+		foreach ($this->process->childprocess as $pid=>$child)
+		{
+			$msg.=$this->stopCommand($child->name);
+		}
+		return $msg;
 	}
 	
 	public function getReadableFileSize($size, $retstring = null) 

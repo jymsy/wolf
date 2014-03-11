@@ -13,7 +13,7 @@ class wolfCtl{
 			exit;
 		}
 		$this->readConfig($config);
-		$this->_socket = new socketServer($this->host, $this->port);
+		$this->_socket = new socketServer($this->host, $this->port,true);
 	}
 	
 	public function readConfig($path)
@@ -73,6 +73,7 @@ class wolfCtl{
 	public function shutdownCommand()
 	{
 // 		$wolfPid=file_get_contents($this->pidfile);
+		echo $this->send('shutdown');
 		$wolfPid=trim($this->send('pid'),"\n");
 		if (is_numeric($wolfPid)) 
 		{
