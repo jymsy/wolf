@@ -69,7 +69,7 @@ class FileLog{
 	 		@fwrite($this->_fp, $text);
 	 	}
 	 	
-	 	@fclose($fp);
+	 	@fclose($this->_fp);
 	 }
 	 
 	 /**
