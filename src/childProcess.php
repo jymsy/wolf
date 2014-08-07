@@ -49,35 +49,6 @@ class childProcess {
 		
 		$this->pid = $pid;
 		$this->_init = true;
-		$self = $this;
-		
-// 		$tick = function () use ($self)
-// 		{
-// 			if (!$self->manager || !$self->queue) {
-// // 				echo "$self->pid empty\n";
-// 				return;
-// 			}
-			
-// 			if ($self->manager->isMaster()) {
-// // 				echo "is master\n";
-// 				if (!msg_queue_exists($self->pid))
-// 					return;
-// // 				echo "get child queue:$self->pid\n";
-// 				$self->queue = msg_get_queue($self->pid);
-// 			}else{
-// 				if (!msg_queue_exists($self->ppid))
-// 					return;
-// // 				echo "get parent queue:$self->ppid\n";
-// 				$self->queue = msg_get_queue($self->ppid);
-// 			}
-// 		};
-		
-// 		$this->manager->emit->on('tick', $tick);
-		
-		// When child process exit remove this
-// 		$this->emit->on('exit', function () use ($self, $tick) {
-// 			$self->manager->emit->removeListener('tick', $tick);
-// 		});
 		
 		return $this;
 	}

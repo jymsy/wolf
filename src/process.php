@@ -273,10 +273,6 @@ class Process {
 			$title='process '.$name.' has been started.';
 		}
 		$sendArr=explode(',', $sendto);
-// 		foreach ($sendArr as $send)
-// 		{
-// 			shell_exec('export LANG=en_US.UTF-8;echo "'.$content.'" |  mail -s "'.$title.'" '.$send);
-// 		}
 		$mail = new PHPMailer;
 		$mail->isSMTP();
 		$mail->SMTPAuth=true;
