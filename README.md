@@ -1,3 +1,3 @@
 wolf
 ====
-process manger in PHP
+process manager in PHP
