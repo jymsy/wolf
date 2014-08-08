@@ -9,10 +9,5 @@ require dirname(__DIR__).'/src/wolfserver.php';
 
 
 $config = dirname(__DIR__).'/conf/wolf.conf';
-// $pro = new Process($config);
-// $pro->runCmd();
-// $pro->wait();
-
 $server = new WolfServer($config);
-//$server->process->runCmd();
 $server->wait();
