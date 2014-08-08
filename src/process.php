@@ -43,15 +43,15 @@ class Process {
 	 */
 	public $serverPid;
 	/**
-	 * @var unknown
+	 * @var EventEmitter 事件对象
 	 */
 	public $emit;
+//	/**
+//	 * @var unknown
+//	 */
+//	private $_log;
 	/**
-	 * @var unknown
-	 */
-	private $_log;
-	/**
-	 * @var unknown
+	 * @var array 默认配置
 	 */
 	public $programDefaultConfig= array(
 			'command'=>'',
@@ -106,7 +106,6 @@ class Process {
 	
 	public function signalHandler($signal)
 	{
-// 		echo "getting killed ".getmypid()."\n";
 		switch ($signal)
 		{
 			case SIGTERM:
@@ -145,7 +144,7 @@ class Process {
 				
 				if (empty($this->childprocess[$pid])) 
 					continue;
-// 				$this->log("process ".$this->childprocess[$pid]->name.":$pid shutdown", FileLog::LEVEL_INFO);
+
 				$this->childprocess[$pid]->emit->emit('finish', $status);
 				$this->childprocess[$pid]->shutdown($status);
 				$this->clear($pid);

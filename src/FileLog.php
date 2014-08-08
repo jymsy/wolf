@@ -6,7 +6,7 @@
 class FileLog{
 	const LEVEL_TRACE='trace';
 // 	const LEVEL_WARNING='warning';
-// 	const LEVEL_ERROR='error';
+ 	const LEVEL_ERROR='error';
 	const LEVEL_INFO='info';
 	/**
 	 * @var string 日志文件路径，如果没有设置的话
@@ -29,6 +29,8 @@ class FileLog{
 	 * 对其他用户只有读权限。
 	 */
 	 public $dirMode = 0775;
+
+    public $logLevel = array(self::LEVEL_INFO);
 	 
 	 private $_fp;
 	 
@@ -53,7 +55,7 @@ class FileLog{
 	 
 	 public function log($msg, $level)
 	 {
-	 	if($msg == '')
+	 	if($msg == '' || !in_array($level,$this->logLevel))
 	 		return;
 	 	$text=self::formatLogMessage($msg,$level,time());
 	 	

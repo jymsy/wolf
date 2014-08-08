@@ -69,8 +69,14 @@ class WolfServer{
 		$this->logfile=dirname(__DIR__).'/var/wolf.log';
 		$this->readConfig($config);
 	}
-	
-	public function readConfig($path)
+
+    /**
+     * 读取配置文件
+     * @param $path
+     * @return bool
+     * @throws Exception
+     */
+    public function readConfig($path)
 	{
 		$config = parse_ini_file($path, true);
 	
@@ -100,7 +106,8 @@ class WolfServer{
 		}
 		var_dump($this->process->totalprocess);
 		self::$_log = new FileLog($this->logfile, $this->logfile_backups, $this->logfile_maxsize);
-		self::log("load config from $path", $this->loglevel);
+        self::$_log->logLevel = explode(',',$this->loglevel);
+		self::log("load config from $path", FileLog::LEVEL_INFO);
 		return true;
 	}
 	

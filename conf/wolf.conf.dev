@@ -4,7 +4,7 @@ port=3839
 ;logfile=/tmp/wolf.log ; (main log file;default $var/wolf.log)
 logfile_maxsize=1024       ; (KB max main logfile bytes b4 rotation;default 10MB)
 logfile_backups=5           ; (num of main logfile rotation backups;default 10)
-;loglevel=info                ; (log level;default info; others: debug,warn,trace)
+;loglevel=info                ; (log level;default info; others: error,trace or split whit comma for multi level)
 
 [wolfctl]
 host=127.0.0.1
