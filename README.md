@@ -7,8 +7,13 @@ PHP Requirements
  * PHP 5.3.? - not sure exact version
  * POSIX extension
  
- What can wolf do?
+What can wolf do?
 ============
  * Managing process.(start, stop, restart..)
  * Catching process output to log file.
  * Sending email when process stopped.
+ 
+How to use?
+============
+ * Rename conf/wolf.conf.dev to conf/wolf.conf.
+ * Modify wolf.conf.
