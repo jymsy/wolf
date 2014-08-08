@@ -1,7 +1,6 @@
 [wolfserver]
 host=127.0.0.1
 port=3839
-pidfile=/tmp/wolf.pid ; (wolfserver pidfile;default wolf.pid)
 ;logfile=/tmp/wolf.log ; (main log file;default $var/wolf.log)
 logfile_maxsize=1024       ; (KB max main logfile bytes b4 rotation;default 10MB)
 logfile_backups=5           ; (num of main logfile rotation backups;default 10)
