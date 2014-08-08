@@ -1,6 +1,11 @@
 <?php
 declare(ticks = 1);
 
+/**
+ * Class WolfServer
+ *  wolf 服务端程序，负责控制程序的启动、停止，
+ *  监听socket端口，加载配置等等。
+ */
 class WolfServer{
 	/**
 	 * @var string 配置文件路径
@@ -14,7 +19,6 @@ class WolfServer{
 	 * @var integer 监听的端口
 	 */
 	public $port = 3838;
-	public $pidfile = '';
 	/**
 	 * @var string 日志文件路径
 	 * 默认为空，则在var/wolf.log
@@ -41,7 +45,7 @@ class WolfServer{
 	 */
 	public $process;
 	/**
-	 * @var unknown
+	 * @var array 命令和处理函数对应数组
 	 */
 	private $_cmdList = array(
 			'status'=>'statusCommand',
@@ -63,9 +67,7 @@ class WolfServer{
 		$this->_configPath = $config;
 		$this->process = new Process();
 		$this->logfile=dirname(__DIR__).'/var/wolf.log';
-// 		$this->pidfile=dirname(__DIR__).'/var/wolf.pid';
 		$this->readConfig($config);
-// 		$this->writePidFile();
 	}
 	
 	public function readConfig($path)
@@ -100,11 +102,6 @@ class WolfServer{
 		self::$_log = new FileLog($this->logfile, $this->logfile_backups, $this->logfile_maxsize);
 		self::log("load config from $path", $this->loglevel);
 		return true;
-	}
-	
-	public function writePidFile()
-	{
-		file_put_contents($this->pidfile, $this->process->pid);
 	}
 	
 	public function wait()
