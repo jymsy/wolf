@@ -202,17 +202,11 @@ class WolfServer{
 			}
 		}
 	
-// 		msg_send($this->process->queue, $this->process->serverPid, $msg, true, false, $error);
 		$this->process->sendMsg($msg, $this->process->serverPid,$this->process->pid);
 	}
 	
 	public function parseCmd($cmd)
 	{
-// 		if (!is_resource($this->process->queue) || !msg_stat_queue($this->process->queue))
-// 		{
-// 			$this->process->queue = msg_get_queue($this->process->ppid);
-// 		}
-// 		msg_send($this->process->queue, $this->process->ppid, $cmd, true, false, $error);
 		$this->process->sendMsg($cmd, $this->process->ppid,$this->process->ppid);
 		if(msg_receive($this->process->queue, $this->process->pid, $null, 1024, $result, true))
 		{
@@ -223,14 +217,16 @@ class WolfServer{
 	
 	public function helpCommand()
 	{
-		$msg="Usage: wolfctl <command>\n\n";
-		$msg.="support command list:\n";
-		$msg.="\tstatus\tGet all process status info\n";
-		$msg.="\thelp\tshow this list\n";
-		$msg.="\treload\treload the config\n";
-		$msg.="\tstart <name>\tstart a process\n";
-		$msg.="\tstop <name>\tstop a process\n";
-		$msg.="\trestart <name>\trestart a process\n";
+        $msg=<<<'EOD'
+Usage: wolfctl <command>
+support command list:
+    status                      get all process status info
+    help                        show this list
+    reload                      reload the config
+    start <name>        start a process
+    stop <name>         stop a process
+    restart <name>      restart a process
+EOD;
 		return $msg;
 	}
 	
