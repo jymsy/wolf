@@ -110,8 +110,12 @@ class WolfServer{
 		self::log("load config from $path", FileLog::LEVEL_INFO);
 		return true;
 	}
-	
-	public function wait()
+
+    /**
+     * fork 进程，启动socket
+     * @throws Exception
+     */
+    public function wait()
 	{
 		$this->daemonize();
 		$this->process->pid=posix_getpid();
@@ -120,7 +124,7 @@ class WolfServer{
 		if($pid === -1)
 			throw new \Exception('Unable to fork child process.');
 		elseif($pid)
-		{
+		{//父进程启动进程
 			$this->process->runCmd();
 			$run=true;			
 			$this->process->serverPid = $pid;
@@ -136,13 +140,12 @@ class WolfServer{
 				}
 				usleep(200000);
 			}
-		}else{
+		}else{//用来监听socket的子进程
 			$this->process->master=false;
 			$this->process->ppid = $this->process->pid;
 			$this->process->pid = posix_getpid();
-			self::log("listenning client at $this->host:$this->port on pid:".$this->process->pid, FileLog::LEVEL_INFO);
-			$server = new socketServer($this->host, $this->port);
-			
+			self::log("listenning client at $this->host:$this->port on pid:".$this->process->pid, FileLog::LEVEL_TRACE);
+			$server = new SocketThreadServer($this->host, $this->port);
 			if ($server) {
 				$server->listen(array($this, 'parseCmd'));
 			}
@@ -150,14 +153,17 @@ class WolfServer{
 			exit;
 		}
 	}
-	
-	protected function daemonize()
+
+    /**
+     * 以守护进程方式启动
+     * @throws Exception
+     */
+    protected function daemonize()
 	{
 		$pid=pcntl_fork();
 		if ($pid === -1) {
 			throw new \Exception('Unable to fork child process.');
-		}
-		elseif($pid)
+		}elseif($pid)
 		{
 			pcntl_wait($status, WNOHANG);
 			exit;

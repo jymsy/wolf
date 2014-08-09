@@ -1,6 +1,6 @@
 #!/usr/bin/env php
 <?php
-require dirname(__DIR__).'/src/socketServer.php';
+require dirname(__DIR__) . '/src/SocketClient.php';
 require dirname(__DIR__).'/src/wolfCtl.php';
 
 array_shift($_SERVER["argv"]);

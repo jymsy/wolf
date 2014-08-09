@@ -6,6 +6,8 @@ PHP Requirements
 
  * PHP 5.3.? - not sure exact version
  * POSIX extension
+ * pcntl extension
+ * pthreads extension
  
 What can wolf do?
 ============

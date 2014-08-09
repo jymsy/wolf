@@ -13,7 +13,7 @@ class wolfCtl{
 			exit;
 		}
 		$this->readConfig($config);
-		$this->_socket = new socketServer($this->host, $this->port,true);
+		$this->_socket = new SocketClient($this->host, $this->port);
 	}
 	
 	public function readConfig($path)

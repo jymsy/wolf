@@ -4,7 +4,8 @@ declare(ticks = 1);
 require dirname(__DIR__).'/src/EventEmitter.php';
 require dirname(__DIR__).'/src/process.php';
 require dirname(__DIR__).'/src/childProcess.php';
-require dirname(__DIR__).'/src/socketServer.php';
+require dirname(__DIR__).'/src/SocketThread.php';
+require dirname(__DIR__).'/src/SocketThreadServer.php';
 require dirname(__DIR__).'/src/wolfserver.php';
 
 
