@@ -284,7 +284,10 @@ EOD;
 				}
 			}
 			if (!$running) {
-				$child = $this->process->spawn($name, $this->process->totalprocess[$name], $this->process->totalprocess[$name]['autorestart']==='1');
+                $files = $this->process->createLogFile($name, $this->process->totalprocess[$name]);
+				$child = $this->process->parallel(array($this->process, 'parllelCallback'),
+                    $this->process->totalprocess[$name]['command'], $files, $name);
+
 				$msg="start process:$name success.pid is $child->pid\n";
 			}
 		}else{

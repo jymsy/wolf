@@ -158,16 +158,14 @@ class Process {
 	}
 	
 	/**
-	 * Spawn the command
+	 * 创建日志文件
 	 *
-	 * @param string         $cmd
-	 * @param array $options
-	 * @param bool           $start
-	 * @return childProcess
+	 * @param string  $name
+	 * @param array $detail
+	 * @return array files
 	 */
-	public function spawn($name, $detail)
+    public function createLogFile($name, $detail)
 	{
-// 		$dir = sys_get_temp_dir();
 		$dir = dirname(__DIR__).'/var';
 		// Files to descriptor
 		$files = array();
@@ -183,28 +181,29 @@ class Process {
 			touch($file);
 			chmod($file, 0644);
 		}
-		
-		return $this->parallel(array($this, 'parllelCallback'), 
-				$detail['command'], $files, $name);
+
+        return $files;
+
 	}
 	
 	/**
-	 * Run the closure in parallel space
+	 *  创建子进程
 	 *
-	 * @param callable|Process $callback
-	 * @param array   $options
-	 * @param bool   $start
-	 * @throws \RuntimeException
-	 * @return Process
+	 * @param callable $callback
+	 * @param string   $cmd
+	 * @param array   $files
+     * @param string $name
+	 * @return childProcess
+     * @throws Exception
 	 */
-	public function parallel($callback, $cmd, $files, $name)
+    public function parallel($callback, $cmd, $files, $name)
 	{
 		$child = new childProcess($this, null, $this->pid);
 		
 		$pid = pcntl_fork();
 		
 		if ($pid === -1) {
-			throw new \Exception('Unable to fork child process.');
+			throw new Exception('Unable to fork child process.');
 		} else if ($pid) {
 			$this->log("fork parent:$this->pid,child:$pid", FileLog::LEVEL_TRACE);
 			$this->listen();
@@ -214,7 +213,7 @@ class Process {
 			$child->name = $name;
 			$child->startTime = time();
 			$this->childprocess[$pid] = $child;
-			$child->emit->emit('fork');
+//			$child->emit->emit('fork');
 			
 			$self=$this;
 			$child->emit->on('finish', function () use (
@@ -301,6 +300,7 @@ class Process {
 	}
 	
 	/**
+     * 通过proc_open执行命令
 	 * @param string $cmd
 	 * @param FileLog[] $childfiles
 	 * @param string process name
@@ -378,10 +378,12 @@ class Process {
 		}
 		return $this;
 	}
-	
 
-	
-	public function runCmd()
+
+    /**
+     *  运行配置了自动启动的进程
+     */
+    public function runCmd()
 	{
 		foreach ($this->totalprocess as $name=>$detail)
 		{
@@ -389,8 +391,12 @@ class Process {
 			{
 				if($detail['command'] === ''){
 					echo "process $name command is invalid.\n";
-				}else
-					$this->spawn($name, $this->totalprocess[$name]/*, $detail['autorestart']==='1'*/);
+				}else{
+                    $files = $this->createLogFile($name, $this->totalprocess[$name]);
+                    $this->parallel(array($this, 'parllelCallback'),
+                        $detail['command'], $files, $name);
+                }
+
 			}
 		}
 	}
