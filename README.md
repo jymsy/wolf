@@ -19,3 +19,5 @@ How to use?
 ============
  * Rename conf/wolf.conf.dev to conf/wolf.conf.
  * Modify wolf.conf.
+ * run "bin/wolfd"
+ * use "bin/wolfctl help" for help 
