@@ -46,10 +46,6 @@ class Process {
 	 * @var EventEmitter 事件对象
 	 */
 	public $emit;
-//	/**
-//	 * @var unknown
-//	 */
-//	private $_log;
 	/**
 	 * @var array 默认配置
 	 */
@@ -205,6 +201,7 @@ class Process {
 		if ($pid === -1) {
 			throw new Exception('Unable to fork child process.');
 		} else if ($pid) {
+            //parent
 			$this->log("fork parent:$this->pid,child:$pid", FileLog::LEVEL_TRACE);
 			$this->listen();
 			// Save child process and return
@@ -213,9 +210,9 @@ class Process {
 			$child->name = $name;
 			$child->startTime = time();
 			$this->childprocess[$pid] = $child;
-//			$child->emit->emit('fork');
-			
+
 			$self=$this;
+            //当进程停止时调用
 			$child->emit->on('finish', function () use (
 					$child, $self, $callback, $cmd, $files, $name)
 			{
@@ -224,6 +221,7 @@ class Process {
 				if ($self->totalprocess[$name]['mailto']!=='none') {
 					$self->sendMail($name, $self->totalprocess[$name]['mailto'], true,$files);
 				}
+                //配置了autorestart
 				if ($self->totalprocess[$name]['autorestart'] === '1') 
 				{
 					$self->log("retries ".$self->totalprocess[$name]['alreadyretries'], FileLog::LEVEL_INFO);
@@ -260,13 +258,21 @@ class Process {
 			exit;
 		}
 	}
-	
-	public function sendMail($name,$sendto,$finished=true,$files=array())
+
+    /**
+     * 发送进程通知邮件
+     * @param $name 进程名
+     * @param $sendto 收件人
+     * @param bool $finished 进程停止还是启动
+     * @param array $files 日志文件路径
+     */
+    public function sendMail($name,$sendto,$finished=true,$files=array())
 	{
-		$content='server ip:'.$this->getIP('eth1');
+
+		$content='server name:'.WolfServer::$app->name;
 		if ($finished) {
 			$title='process '.$name.' has been stopped.';
-			$content.="\n".$this->getLogTail($files[0]);
+			$content.="\nstdout\n".$this->getLogTail($files[0])."\n\nstderr\n{$this->getLogTail($files[1])}";
 		}else {
 			$title='process '.$name.' has been started.';
 		}
@@ -294,10 +300,15 @@ class Process {
 	{
 		return shell_exec("tail -n 30 $filename");
 	}
-	
-	function getIP($eth){
-		return shell_exec("/sbin/ifconfig $eth|grep \"inet addr:\"|cut -d: -f2|awk '{print $1}'");
-	}
+
+//    /**
+//     * 获取进程所在服务器地址
+//     * @param $eth
+//     * @return string
+//     */
+//    function getServerName($eth){
+//		return shell_exec("/sbin/ifconfig $eth|grep \"inet addr:\"|cut -d: -f2|awk '{print $1}'");
+//	}
 	
 	/**
      * 通过proc_open执行命令
@@ -356,8 +367,11 @@ class Process {
 		proc_close($resource);
 		exit;
 	}
-	
-	protected function childInitialize()
+
+    /**
+     * 初始化子进程属性
+     */
+    protected function childInitialize()
 	{
 		$this->emit->removeAllListeners();
 		$this->master = false;
@@ -366,11 +380,12 @@ class Process {
 		$this->ppid = $this->pid;
 		$this->pid = $pid;
 		$this->queue = null;
-// 		$this->process = new childProcess($this, $this->pid, $this->ppid);
-		
 		$this->childprocess = array();
 	}
-	
+
+    /**
+     * 开始监听消息队列
+     */
 	public function listen()
 	{
 		if (!$this->queue) {

@@ -40,10 +40,18 @@ class WolfServer{
 	 * @var FileLog
 	 */
 	private static $_log;
+    /**
+     * @var string wolf所在服务器名
+     */
+    public $name = 'test';
 	/**
 	 * @var Process
 	 */
 	public $process;
+    /**
+     * @var WolfServer
+     */
+    public static $app;
 	/**
 	 * @var array 命令和处理函数对应数组
 	 */
@@ -68,6 +76,7 @@ class WolfServer{
 		$this->process = new Process();
 		$this->logfile=dirname(__DIR__).'/var/wolf.log';
 		$this->readConfig($config);
+        self::$app = $this;
 	}
 
     /**
