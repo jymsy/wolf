@@ -1,5 +1,6 @@
 <?php
 /**
+ * 日志文件类
  * @author Jiangyumeng
  *
  */
@@ -52,8 +53,14 @@ class FileLog{
 	 		$this->maxFileSize = 1;
 	 	}
 	 }
-	 
-	 public function log($msg, $level)
+
+    /**
+     * 记录日志文件
+     * @param $msg
+     * @param $level
+     * @throws Exception
+     */
+    public function log($msg, $level)
 	 {
 	 	if($msg == '' || !in_array($level,$this->logLevel))
 	 		return;
@@ -100,7 +107,6 @@ class FileLog{
 	  * 格式化一条日志信息。
 	  * @param string $message 消息内容
 	  * @param integer $level 消息等级
-	  * @param string $category 消息分类
 	  * @param integer $time 时间戳
 	  * @return string 格式化后的消息
 	  */

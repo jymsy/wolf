@@ -459,8 +459,13 @@ EOD;
 		}
 		return $output;
 	}
-	
-	public static function log($msg, $level)
+
+    /**
+     * 记录日志文件
+     * @param string $msg 日志内容
+     * @param string $level 日志等级
+     */
+    public static function log($msg, $level)
 	{
 		self::$_log->log($msg, $level);
 	}

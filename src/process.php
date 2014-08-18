@@ -172,8 +172,8 @@ class Process {
 			}else{
 				$files[] = $file = $detail[$type];
 			}
-			
-			$this->log("create log file at $file", FileLog::LEVEL_INFO);
+
+            WolfServer::log("create log file at $file", FileLog::LEVEL_INFO);
 			touch($file);
 			chmod($file, 0644);
 		}
@@ -202,7 +202,7 @@ class Process {
 			throw new Exception('Unable to fork child process.');
 		} else if ($pid) {
             //parent
-			$this->log("fork parent:$this->pid,child:$pid", FileLog::LEVEL_TRACE);
+            WolfServer::log("fork parent:$this->pid,child:$pid", FileLog::LEVEL_TRACE);
 			$this->listen();
 			// Save child process and return
 			$child->init($pid);
@@ -295,10 +295,16 @@ class Process {
 		$mail->Body    = $content;
 		$mail->send();
 	}
-	
-	public function getLogTail($filename)
+
+    /**
+     * 获取文件tail
+     * @param string $filename 文件名
+     * @param int $lines 行数
+     * @return string
+     */
+    public function getLogTail($filename, $lines=30)
 	{
-		return shell_exec("tail -n 30 $filename");
+		return shell_exec("tail -n $lines $filename");
 	}
 
 //    /**
@@ -319,7 +325,7 @@ class Process {
 	 */
 	public function parllelCallback($cmd, $childfiles, $name)
 	{
-		$this->log("this is child process:$this->pid", FileLog::LEVEL_TRACE);
+        WolfServer::log("this is child process:$this->pid", FileLog::LEVEL_TRACE);
 		$pipes = array();
 	
 		// Make pipe descriptors for proc_open()
@@ -329,7 +335,7 @@ class Process {
 		);
 	
 		$resource = proc_open($cmd, $fd, $pipes);
-		$this->log("run cmd:$cmd", FileLog::LEVEL_TRACE);
+        WolfServer::log("run cmd:$cmd", FileLog::LEVEL_TRACE);
 		$this->sendMail($name, $this->totalprocess[$name]['mailto'],false);
 		if (!is_resource($resource)) {
 			throw new Exception('Can not run "'.$cmd.'" using pipe open');
@@ -345,25 +351,21 @@ class Process {
 				true, false, $error);
 			}
 		}
-		$stdout = $stderr = null;
+
 		$reader= array($pipes[1]);
 		stream_select($reader, $null, $null, 0, NULL);
 		do {
-			// 			$stdout =;
 			$childfiles[0]->log(trim(fread($pipes[1], 2048),"\n"), FileLog::LEVEL_INFO);
-			// 			fwrite($filep[0], $stdout);
 		} while (!feof($pipes[1]));
 	
 		while (!feof($pipes[2])) {
-			// 			$stderr = fread($pipes[2], 2048);
 			$childfiles[1]->log(trim(fread($pipes[2], 2048),"\n"), FileLog::LEVEL_INFO);
-			// 			fwrite($filep[1], $stderr);
 		}
 	
 		foreach ($pipes as $pipe) {
 			fclose($pipe);
 		}
-		// 		echo "close pipe\n";
+
 		proc_close($resource);
 		exit;
 	}
@@ -434,8 +436,13 @@ class Process {
 	{
 		return $this->master;
 	}
-	
-	public function log($msg, $level)
+
+    /**
+     * 记录日志文件
+     * @param $msg 日志内容
+     * @param $level 日志等级
+     */
+    public function log($msg, $level)
 	{
 		WolfServer::log($msg, $level);
 	}
