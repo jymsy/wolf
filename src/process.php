@@ -482,18 +482,8 @@ class Process {
 		}
 	}
 	
-	public function end($status = 0, $info = null)
+	public function end()
 	{
-// 		foreach ($this->childprocess as $pid=>$child)
-// 		{
-// 			if (!$child->isExit())
-// 			{
-// 				$child->status = $status;
-// 				$child->emit->emit('exit', $status, $info);
-// 			}
-// 		}
-// 		$this->emit->emit('exit', $status, $info);
-		
 		if ($this->isMaster()) {
 			if (is_resource($this->queue) && msg_stat_queue($this->queue)) {
 				msg_remove_queue($this->queue);

@@ -1,10 +1,22 @@
 <?php
-   
+
+/**
+ * Class wolfCtl
+ * wolf客户端类，通过socket和wolf server通信
+ */
 class wolfCtl{
-	public $host='127.0.0.1';
-	public $port=3838;
-	public $pidfile='';
-	private $_socket;
+    /**
+     * @var string wolf server 地址
+     */
+    public $host='127.0.0.1';
+    /**
+     * @var int wolf server 端口
+     */
+    public $port=3838;
+    /**
+     * @var
+     */
+    private $_socket;
 	
 	public function __construct($config)
 	{
@@ -15,8 +27,13 @@ class wolfCtl{
 		$this->readConfig($config);
 		$this->_socket = new SocketClient($this->host, $this->port);
 	}
-	
-	public function readConfig($path)
+
+    /**
+     * 读取配置
+     * @param string $path 配置文件路径
+     * @throws Exception
+     */
+    public function readConfig($path)
 	{
 		$config = parse_ini_file($path, true);
 		
@@ -34,19 +51,16 @@ class wolfCtl{
 						$this->$name = $value;
 					}
 				}
-			}elseif ($item==='wolfserver')
-			{
-				foreach ($detail as $name=>$value)
-				{
-					if ($name==='pidfile') {
-						$this->pidfile=$value;
-					}
-				}
 			}
 		}
 	}
-	
-	public function parseCmd($cmd)
+
+    /**
+     * 解析命令
+     * @param string $cmd
+     * @return string
+     */
+    public function parseCmd($cmd)
 	{
 		if ($cmd=='help' || empty($cmd)) {
 			return $this->helpCommand();
@@ -58,21 +72,27 @@ class wolfCtl{
 	
 	public function helpCommand()
 	{
-		$msg="Usage: wolfctl <command>\n\n";
-		$msg.="support command list:\n";
-		$msg.="\tstatus\tGet all process status info\n";
-		$msg.="\thelp\tshow this list\n";
-		$msg.="\treload\treload the config\n";
-		$msg.="\tstart <name>\tstart a process\n";
-		$msg.="\tstop <name>\tstop a process\n";
-		$msg.="\tshutdown\tShut the wolfserver down.\n";
-		$msg.="\trestart <name>\trestart a process\n";
+        $msg=<<<'EOD'
+Usage: wolfctl <command>
+support command list:
+    status                      get all process status info
+    help                        show this list
+    reload                      reload the config
+    start <name>        start a process
+    stop <name>         stop a process
+    restart <name>      restart a process
+    shutdown                shut the wolfserver down.
+
+EOD;
 		return $msg;
 	}
-	
-	public function shutdownCommand()
+
+    /**
+     * 关闭wolf server
+     * @return string
+     */
+    public function shutdownCommand()
 	{
-// 		$wolfPid=file_get_contents($this->pidfile);
 		echo $this->send('shutdown');
 		$wolfPid=trim($this->send('pid'),"\n");
 		if (is_numeric($wolfPid)) 
@@ -85,8 +105,13 @@ class wolfCtl{
 			return "wolfserver pid is not a valid number.\n";
 		}
 	}
-	
-	public function send($cmd)
+
+    /**
+     * 向wolf server发送命令
+     * @param $cmd
+     * @return mixed
+     */
+    public function send($cmd)
 	{
 		return $this->_socket->send($cmd."\n");
 	}
