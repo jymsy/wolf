@@ -1,27 +1,25 @@
 [wolfserver]
 host=127.0.0.1
 port=3839
-logfile=/tmp/wolf.log ; (main log file;default $var/wolf.log)
-logfile_maxsize=1024       ; (KB max main logfile bytes b4 rotation;default 10MB)
-logfile_backups=5           ; (num of main logfile rotation backups;default 10)
-loglevel=info                ; (log level;default info; others: error,trace or split whit comma for multi level)
-name=test                       ;server name.(default is test)
+logfile=/tmp/wolf.log                           ;(main log file;default $var/wolf.log)
+logfile_maxsize=1024                            ;(KB max main logfile bytes b4 rotation;default 10MB)
+logfile_backups=5                               ; (num of main logfile rotation backups;default 10)
+loglevel=info                                       ; (log level;default info; others: error,trace or split whit comma for multi level)
+name=test                                           ;server name.(default is test)
+mail_host =smtp.xxx.com                    ;smtp host(default is empty string)
+mail_account =xxx@xx.com                       ;email account of sending warning email(default is empty string)
+mail_pwd =xxxx                      ;email password(default is empty string)
 
 [wolfctl]
 host=127.0.0.1
 port=3839
 
 [program:update]
-command=php /data/cloudservice/Framework/tvos/skyc.php upgradepush run
+command=gedit
 startretriesecs=60
-mailto=jiangyumeng@skyworth.com
+mailto=xxxxxxx@xxx.com
 autostart=true
 autorestart=true
-stdout_logfile_maxbytes=1024
-stderr_logfile_maxbytes=1024
-
-[program:update1]
-command=php /data/cloudservice/Framework/tvos/skyc.php upgradepush run
 stdout_logfile_maxbytes=1024
 stderr_logfile_maxbytes=1024
 

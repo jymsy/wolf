@@ -52,6 +52,18 @@ class WolfServer{
      * @var WolfServer
      */
     public static $app;
+    /**
+     * @var string smtp 服务器
+     */
+    public $mail_host='';
+    /**
+     * @var string 邮箱用户名
+     */
+    public $mail_account='';
+    /**
+     * @var string 邮箱用户密码
+     */
+    public $mail_pwd='';
 	/**
 	 * @var array 命令和处理函数对应数组
 	 */
@@ -191,8 +203,12 @@ class WolfServer{
 			exit;
 		}
 	}
-	
-	private function processCmd($cmd)
+
+    /**
+     * 执行命令
+     * @param string $cmd
+     */
+    private function processCmd($cmd)
 	{
 		$msg="\n";
 		$args = explode(' ', $cmd);
@@ -223,8 +239,12 @@ class WolfServer{
 		}
 		return "exec cmd error\n";
 	}
-	
-	public function helpCommand()
+
+    /**
+     * 帮助命令
+     * @return string
+     */
+    public function helpCommand()
 	{
         $msg=<<<'EOD'
 Usage: wolfctl <command>
@@ -238,11 +258,14 @@ support command list:
 EOD;
 		return $msg;
 	}
-	
-	public function statusCommand()
+
+    /**
+     * 获取进程状态
+     * @return string
+     */
+    public function statusCommand()
 	{
 		$msg = "total process :".count($this->process->totalprocess)."\n";
-// 		$msg .= "total running process :".count($this->childprocess)."\n";
 		$msg.="wolf memory usage:".$this->getReadableFileSize(memory_get_usage())."\n\n";
 		foreach ($this->process->totalprocess as $name => $detail)
 		{
@@ -275,8 +298,13 @@ EOD;
 		}
 		return $msg;
 	}
-	
-	public function startCommand($name=null)
+
+    /**
+     * 启动进程
+     * @param string $name
+     * @return string
+     */
+    public function startCommand($name=null)
 	{
 		if (!$name) {
 			return "process name is invalid\n";
@@ -305,8 +333,15 @@ EOD;
 	
 		return $msg;
 	}
-	
-	public function stopCommand($name=null,&$cmdpid=null, $fromrestart = false)
+
+    /**
+     * 停止进程
+     * @param string $name
+     * @param string $cmdpid
+     * @param bool $fromrestart
+     * @return string
+     */
+    public function stopCommand($name=null,&$cmdpid=null, $fromrestart = false)
 	{
 		if (!$name) {
 			return "process name is invalid\n";

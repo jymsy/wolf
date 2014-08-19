@@ -280,11 +280,12 @@ class Process {
 		$mail = new PHPMailer;
 		$mail->isSMTP();
 		$mail->SMTPAuth=true;
-		$mail->Host = 'smtp.163.com';
-		$mail->Username = 'jymcron';
-		$mail->Password = '7717810483';
-		
-		$mail->From = 'jymcron@163.com';
+
+        $mail->Host = WolfServer::$app->mail_host;
+        $mail->Username = WolfServer::$app->mail_account;
+        $mail->Password = WolfServer::$app->mail_pwd;
+
+		$mail->From = WolfServer::$app->mail_account;
 		$mail->FromName = 'Wolf';
 		foreach ($sendArr as $send)
 		{
