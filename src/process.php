@@ -64,6 +64,7 @@ class Process {
 			'stderr_logfile_backups'=>5,
 			'last_stop_time'=>'Not started',
 			'mailto'=>'none',
+            'user'=>'',
 			'alreadyretries'=>0,
 			'first_stop_time'=>0,
 	);
@@ -253,7 +254,13 @@ class Process {
 			$childfiles[] = new FileLog($files[1], 
 					$this->totalprocess[$name]['stderr_logfile_backups'],
 					$this->totalprocess[$name]['stderr_logfile_maxbytes']);
-			
+
+            $wolfUser = posix_getpwuid(posix_getuid());
+            if($wolfUser['name']==='root' && $this->totalprocess[$name]['user']!==''){
+                if(($tarUser=posix_getpwnam($this->totalprocess[$name]['user']))===FALSE || posix_setuid($tarUser['uid']) === FALSE){
+                    WolfServer::log('change user to '.$this->totalprocess[$name]['user'].' failed.', FileLog::LEVEL_INFO);
+                }
+            }
 			call_user_func($callback, $cmd, $childfiles, $name);
 			exit;
 		}
@@ -440,8 +447,8 @@ class Process {
 
     /**
      * 记录日志文件
-     * @param $msg 日志内容
-     * @param $level 日志等级
+     * @param string $msg 日志内容
+     * @param string $level 日志等级
      */
     public function log($msg, $level)
 	{
