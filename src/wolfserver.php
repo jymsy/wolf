@@ -166,12 +166,14 @@ class WolfServer{
 			$this->process->ppid = $this->process->pid;
 			$this->process->pid = posix_getpid();
 			self::log("listenning client at $this->host:$this->port on pid:".$this->process->pid, FileLog::LEVEL_TRACE);
-			$server = new SocketThreadServer($this->host, $this->port);
-			if ($server) {
-				$server->listen(array($this, 'parseCmd'));
-			}
-			$this->process->sendMsg('killself', $this->process->ppid, $this->process->ppid);
-			exit;
+            try{
+                $server = new SocketThreadServer($this->host, $this->port);
+                $server->listen(array($this, 'parseCmd'));
+            }catch (Exception $e){
+                echo $e->getMessage();
+            }
+            $this->process->sendMsg('killself', $this->process->ppid, $this->process->ppid);
+            exit;
 		}
 	}
 
