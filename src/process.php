@@ -142,13 +142,12 @@ class Process {
 				if (empty($this->childprocess[$pid])) 
 					continue;
 
-				$this->childprocess[$pid]->emit->emit('finish', $status);
+				$this->childprocess[$pid]->emit->trigger('finish', new Event($this,$status));
 				$this->childprocess[$pid]->shutdown($status);
 				$this->clear($pid);
 			}
 		}
-		$this->emit->emit('tick');
-		
+
 		if (!is_resource($this->queue) || !msg_stat_queue($this->queue)) {
 			return;
 		}

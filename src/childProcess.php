@@ -104,7 +104,6 @@ class childProcess {
 	{
 		if ($this->status === null) {
 			$this->status = $status;
-			$this->emit->emit('exit', $status);
 		}
 	}
 	
@@ -120,6 +119,5 @@ class childProcess {
 	{
 		$this->manager = null;
 		$this->queue = null;
-		$this->listeners = array();
 	}
 }
