@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Class EventEmitter 事件绑定，解绑，触发类
+ *
+ */
 class EventEmitter
 {
     /**
@@ -30,7 +34,7 @@ class EventEmitter
     }
 
     /**
-     * Attach a event handler
+     * 绑定事件
      *
      * @static
      * @param array|string $event
@@ -47,7 +51,7 @@ class EventEmitter
     }
 
     /**
-     * remove event handler
+     * 移除事件绑定
      *
      * @param array|string $event
      * @param mixed     $handler
@@ -69,7 +73,7 @@ class EventEmitter
     }
 
     /**
-     * Get listeners of given event
+     * 获取指定事件的处理方法
      *
      * @param string $event
      * @return array
@@ -83,7 +87,7 @@ class EventEmitter
     }
 
     /**
-     * Remove all listeners of given event
+     * 移除指定事件的所有handlers
      *
      * @param string $event
      * @return $this
