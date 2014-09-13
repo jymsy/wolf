@@ -15,19 +15,16 @@ class SocketThreadServer {
         $this->_host = $host;
         $this->_port = $port;
 
-        if(($socket = socket_create(AF_INET,SOCK_STREAM,SOL_TCP))===false){
-//            echo 'socket create error:'.socket_strerror(socket_last_error($this->_socket));
+        if(($socket = socket_create(AF_INET,SOCK_STREAM,SOL_TCP))===FALSE){
             throw new Exception('socket create error:'.socket_strerror(socket_last_error($this->_socket)));
         }
 
         if(@socket_bind($socket, $this->_host, $this->_port)===FALSE)       //绑定要监听的端口
         {
-//            echo "socket bind failed:". socket_strerror(socket_last_error($socket));
             throw new Exception("socket bind failed:". socket_strerror(socket_last_error($socket)));
         }
         if(@socket_listen($socket,10)===FALSE)       //监听端口
         {
-//            echo "socket listen failed: " . socket_strerror(socket_last_error($socket));
             throw new Exception("socket listen failed: " . socket_strerror(socket_last_error($socket)));
         }
 
