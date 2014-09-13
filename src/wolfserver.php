@@ -125,7 +125,7 @@ class WolfServer{
 				$this->process->totalprocess[$cmdname]=$detail;
 			}
 		}
-		var_dump($this->process->totalprocess);
+        echo $this->printProcessConfig();
 		self::$_log = new FileLog($this->logfile, $this->logfile_backups, $this->logfile_maxsize);
         self::$_log->logLevel = explode(',',$this->loglevel);
 		self::log("load config from $path", FileLog::LEVEL_INFO);
@@ -506,4 +506,19 @@ EOD;
 	{
 		self::$_log->log($msg, $level);
 	}
+
+    /**
+     *  打印进程配置
+     */
+    public function printProcessConfig(){
+        $config='';
+        foreach($this->process->totalprocess as $name=>$process){
+            $config.="name:$name\n";
+            foreach($process as $k=>$v){
+                $config.="\t$k:$v\n";
+            }
+            $config.="\n";
+        }
+        return $config;
+    }
 }
