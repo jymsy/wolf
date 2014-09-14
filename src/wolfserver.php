@@ -73,7 +73,6 @@ class WolfServer{
 			'start'=>'startCommand',
 			'reload'=>'reloadCommand',
 			'restart'=>'restartCommand',
-			'help'=>'helpCommand',
 			'pid'=>'pidCommand',
 			'shutdown'=>'shutdownCommand',
 	);
@@ -231,8 +230,13 @@ class WolfServer{
 	
 		$this->process->sendMsg($msg, $this->process->serverPid,$this->process->pid);
 	}
-	
-	public function parseCmd($cmd)
+
+    /**
+     * 将命令从socket进程发送到父进程
+     * @param $cmd
+     * @return string
+     */
+    public function parseCmd($cmd)
 	{
 		$this->process->sendMsg($cmd, $this->process->ppid,$this->process->ppid);
 		if(msg_receive($this->process->queue, $this->process->pid, $null, 1024, $result, true))
@@ -240,25 +244,6 @@ class WolfServer{
 			return $result;
 		}
 		return "exec cmd error\n";
-	}
-
-    /**
-     * 帮助命令
-     * @return string
-     */
-    public function helpCommand()
-	{
-        $msg=<<<'EOD'
-Usage: wolfctl <command>
-support command list:
-    status                      get all process status info
-    help                        show this list
-    reload                      reload the config
-    start <name>        start a process
-    stop <name>         stop a process
-    restart <name>      restart a process
-EOD;
-		return $msg;
 	}
 
     /**
