@@ -437,13 +437,21 @@ class WolfServer{
 		}
 		return $msg.="start process $name success.\n";
 	}
-	
-	public function pidCommand($args = null)
+
+    /**
+     * 获取主进程的pid
+     * @return string
+     */
+    public function pidCommand()
 	{
 		return $this->process->pid."\n";
 	}
-	
-	public function shutdownCommand()
+
+    /**
+     * 停止所有正在运行的进程
+     * @return string
+     */
+    public function shutdownCommand()
 	{
 		$msg='';
 		foreach ($this->process->childprocess as $pid=>$child)
