@@ -107,22 +107,7 @@ class Process {
 		{
 			case SIGTERM:
 			case SIGINT:
-				// Check children
-// 				while ($this->childprocess)
-// 				{
-// 					foreach ($this->childprocess as $child)
-// 					{
-// 						$child->kill(SIGINT);
-// 						$child->shutdown($signal);
-// 						$this->clear($child);
-// 					}
-// 				}
-// 				if($this->serverPid)
-// 				{
-// 					$ret = posix_kill($this->serverPid, SIGKILL);
-// 				}
 				$this->serverExit($signal);
-	
 				exit;
 				break;
 		}
