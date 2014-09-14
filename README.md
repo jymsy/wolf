@@ -8,7 +8,7 @@ bin/                 php bootstrap
 conf/               configure file
 src/                 mainly source code
 var/                 default location of log file
-webmanager/           a web page manager (TODO)
+webmanager/           a web page manager (optional)
 ```
 
 
