@@ -288,6 +288,17 @@ class Process {
 		$mail->send();
 	}
 
+//    /**
+//     * 获取文件tail
+//     * @param string $filename 文件名
+//     * @param int $lines 行数
+//     * @return string
+//     */
+//    public function getLogTail($filename, $lines=30)
+//	{
+//		return shell_exec("tail -n $lines $filename");
+//	}
+
     /**
      * 获取文件tail
      * @param string $filename 文件名
@@ -295,9 +306,30 @@ class Process {
      * @return string
      */
     public function getLogTail($filename, $lines=30)
-	{
-		return shell_exec("tail -n $lines $filename");
-	}
+    {
+        if(($file = @fopen($filename,'r')) !==FALSE){
+            fseek($file, -1, SEEK_END);
+            $num=0;
+            if(fgetc($file)==="\n"){
+                $num++;
+            }
+            do{
+                if($num>=$lines || fseek($file,-2,SEEK_CUR)!=0){
+                    fseek($file,-1,SEEK_CUR);
+                    break;
+                }
+
+                if(fgetc($file)==="\n"){
+                    $num++;
+                }
+            }while(true);
+            $data =stream_get_contents($file);
+            fclose($file);
+            return $data;
+        }else{
+            return '';
+        }
+    }
 
 //    /**
 //     * 获取进程所在服务器地址
