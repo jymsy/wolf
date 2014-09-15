@@ -41,10 +41,10 @@ class childProcess {
 	public function init($pid = null)
 	{
 		if ($this->_init)
-			throw new \Exception('Process has been initialized');
+			throw new Exception('Process has been initialized');
 		
 		if (!$pid && !$this->pid) {
-			throw new \Exception('Process has not pid');
+			throw new Exception('Process has not pid');
 		}
 		
 		$this->pid = $pid;
