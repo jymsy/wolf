@@ -382,7 +382,7 @@ class WolfServer{
 			}
 		}
 		if(!$find)
-			$msg="Error:could not find process $name\n";
+			$msg="Error:could not find process '$name' or process has already stopped.\n";
 		return $msg;
 	}
 	
