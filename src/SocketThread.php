@@ -21,7 +21,8 @@ class SocketThread extends Thread{
             $result = call_user_func($this->_callback, trim($data));
             socket_write($this->_conn, $result,strlen($result));
         }
-
+        socket_shutdown($this->_conn);
         socket_close($this->_conn);
+
     }
 } 
